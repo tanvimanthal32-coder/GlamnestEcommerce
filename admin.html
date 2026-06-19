@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard - GlamNest</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+    background: #fafafa;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(135deg, #4b0f1a, #800020);
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: bold;
+}
+
+/* Cards */
+.dashboard-card {
+    background: #800020;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+/* Table */
+.table th {
+    background: #800020;
+    color: #fff;
+}
+</style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark">
+    <div class="container">
+        <span class="navbar-brand">GlamNest Admin</span>
+    </div>
+</nav>
+
+<div class="container mt-4">
+
+    <!-- DASHBOARD -->
+    <div class="row mb-4">
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h5>Total Orders</h5>
+                <h2 id="total-orders">0</h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h5>Total Revenue</h5>
+                <h2>₹<span id="total-revenue">0</span></h2>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                <h5>Total Customers</h5>
+                <h2 id="total-customers">0</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLE -->
+    <h4>Orders</h4>
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Mobile</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody id="orders-table"></tbody>
+    </table>
+
+</div>
+
+<script>
+
+// 🔥 DUMMY DATA (AUTO LOAD)
+let dummyOrders = [
+    {
+        name: "Tanvi Manthal",
+        mobile: "9123456780",
+        address: "Delhi",
+        items: [{name:"Bracelet", price:4499}],
+        total: 4499,
+        status: "Delivered"
+    },
+    {
+        name: "Sachi Pimplekar",
+        mobile: "9876543210",
+        address: "Solapur",
+        items: [{name:"Ring", price:5999}],
+        total: 5999,
+        status: "Pending"
+    }
+];
+localStorage.removeItem("orders");
+let orders = JSON.parse(localStorage.getItem("orders"));
+
+// 👉 IF NO ORDERS → ADD DUMMY
+if(!orders || orders.length === 0){
+    localStorage.setItem("orders", JSON.stringify(dummyOrders));
+    orders = dummyOrders;
+}
+
+// LOAD DASHBOARD
+function loadDashboard(){
+
+    let table = document.getElementById("orders-table");
+    let totalRevenue = 0;
+    let customers = new Set();
+
+    table.innerHTML = "";
+
+    orders.forEach((order, index) => {
+
+        totalRevenue += order.total;
+        customers.add(order.mobile);
+
+        let items = order.items.map(i => i.name).join(", ");
+
+        table.innerHTML += `
+        <tr>
+            <td>${order.name}</td>
+            <td>${order.mobile}</td>
+            <td>${items}</td>
+            <td>₹${order.total}</td>
+            <td>
+                <select onchange="changeStatus(${index}, this.value)">
+                    <option ${order.status==="Pending"?"selected":""}>Pending</option>
+                    <option ${order.status==="Delivered"?"selected":""}>Delivered</option>
+                </select>
+            </td>
+            <td>
+                <button class="btn btn-danger btn-sm" onclick="deleteOrder(${index})">
+                    Delete
+                </button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("total-orders").innerText = orders.length;
+    document.getElementById("total-revenue").innerText = totalRevenue;
+    document.getElementById("total-customers").innerText = customers.size;
+}
+
+// CHANGE STATUS
+function changeStatus(index, value){
+    orders[index].status = value;
+    localStorage.setItem("orders", JSON.stringify(orders));
+    loadDashboard();
+}
+
+// DELETE ORDER
+function deleteOrder(index){
+    if(confirm("Delete this order?")){
+        orders.splice(index,1);
+        localStorage.setItem("orders", JSON.stringify(orders));
+        loadDashboard();
+    }
+}
+
+loadDashboard();
+</script>
+
+</body>
+</html>

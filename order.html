@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Orders - GlamNest</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body { background: #ffffff; }
+.container { margin-top: 40px; }
+.order-box {
+    background: #fcf2f2;
+    padding: 25px;
+    border-radius: 10px;
+}
+h2 { color: #800020; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="order-box">
+
+<h2>Your Orders</h2>
+
+<ul id="order-list" class="list-group mb-3"></ul>
+
+<h4>Total: ₹<span id="total-price">0</span></h4>
+
+<hr>
+
+<h5>Apply Coupon</h5>
+
+<div class="d-flex mb-3">
+<input type="text" id="coupon" class="form-control" placeholder="Enter Coupon Code">
+<button class="btn btn-danger ms-2" onclick="applyDiscount()">Apply</button>
+</div>
+
+<h5>Discount: ₹<span id="discount">0</span></h5>
+<h4>Final Total: ₹<span id="final-total">0</span></h4>
+
+<hr>
+
+<h4>Delivery Details</h4>
+
+<input type="text" id="name" class="form-control mb-2" placeholder="Full Name">
+<input type="tel" id="mobile" class="form-control mb-2" placeholder="Mobile Number">
+<textarea id="address" class="form-control mb-3" placeholder="Full Address"></textarea>
+
+<button class="btn btn-danger w-100" onclick="placeOrder()">Place Order</button>
+
+</div>
+</div>
+
+<script>
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let totalAmount = 0;
+let discountAmount = 0;
+
+// LOAD ORDERS
+function loadOrders(){
+    let list = document.getElementById("order-list");
+    totalAmount = 0;
+    list.innerHTML = "";
+
+    if(cart.length === 0){
+        list.innerHTML = "<li class='list-group-item'>Cart is empty</li>";
+    }
+
+    cart.forEach((item, index) => {
+        totalAmount += item.price;
+
+        list.innerHTML += `
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div>
+                ${item.name} <br>
+                <small>₹${item.price}</small>
+            </div>
+
+            <button class="btn btn-danger btn-sm"
+            onclick="removeItem(${index})">❌</button>
+        </li>`;
+    });
+
+    document.getElementById("total-price").innerText = totalAmount;
+    document.getElementById("final-total").innerText = totalAmount;
+}
+
+// REMOVE ITEM
+function removeItem(index){
+    if(confirm("Remove this item?")){
+        cart.splice(index,1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        discountAmount = 0;
+        document.getElementById("discount").innerText = 0;
+
+        loadOrders();
+    }
+}
+
+// APPLY COUPON
+function applyDiscount(){
+
+    let code = document.getElementById("coupon").value.trim().toUpperCase();
+
+    discountAmount = 0;
+
+    if(code === "GLAM60"){
+        discountAmount = totalAmount * 0.60;
+    }
+    else if(code === "SAVE10"){
+        discountAmount = totalAmount * 0.10;
+    }
+    else{
+        alert("Invalid Coupon Code!");
+        return;
+    }
+
+    let finalTotal = totalAmount - discountAmount;
+
+    document.getElementById("discount").innerText = discountAmount;
+    document.getElementById("final-total").innerText = finalTotal;
+
+    alert("Coupon Applied Successfully!");
+}
+
+// PLACE ORDER
+function placeOrder(){
+
+    let name = document.getElementById("name").value.trim();
+    let mobile = document.getElementById("mobile").value.trim();
+    let address = document.getElementById("address").value.trim();
+
+    if(name === "" || mobile === "" || address === ""){
+        alert("Please fill all delivery details!");
+        return;
+    }
+
+    if(mobile.length !== 10 || isNaN(mobile)){
+        alert("Enter valid 10-digit mobile number!");
+        return;
+    }
+
+    alert("🎉 Order Placed Successfully!\n\nThank you " + name);
+
+    localStorage.removeItem("cart");
+    window.location.href = "index1.html";
+}
+
+// 🔥 AUTO LOAD + AUTO APPLY COUPON
+window.onload = function(){
+
+    loadOrders();
+
+    let auto = localStorage.getItem("autoCoupon");
+
+    if(auto){
+        document.getElementById("coupon").value = auto;
+        applyDiscount(); // auto apply
+        localStorage.removeItem("autoCoupon");
+    }
+};
+
+</script>
+
+</body>
+</html>

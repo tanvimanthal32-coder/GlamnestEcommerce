@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GlamNest Collections</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #fee8e8;
+}
+
+/* Navbar */
+.navbar {
+    background: linear-gradient(135deg, #4b0f1a, #800020);
+}
+
+.navbar-brand {
+    color: #fff !important;
+}
+
+/* Title */
+.title {
+    text-align: center;
+    margin: 40px 0;
+    color: #4b0f1a;
+}
+
+/* Collection Card */
+.collection-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.collection-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    transition: 0.5s;
+}
+
+.collection-card:hover img {
+    transform: scale(1.1);
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(75,15,26,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+}
+
+.collection-card:hover .overlay {
+    opacity: 1;
+}
+
+.overlay h4 {
+    color: #fff;
+}
+
+/* Product Card */
+.card {
+    border-radius: 12px;
+}
+
+/* Button */
+.btn-order {
+    background: #800020;
+    color: #fff;
+    border-radius: 20px;
+}
+
+/* Cart */
+#cartModal {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.7);
+}
+
+.cart-box {
+    background:#fff;
+    padding:20px;
+    width:350px;
+    margin:100px auto;
+    border-radius:10px;
+}
+
+/* Toast */
+#toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #800020;
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    display: none;
+}
+
+.hide {
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark">
+    <div class="container">
+        <span class="navbar-brand">GlamNest</span>
+        <button class="btn btn-light" onclick="openCart()">
+            🛒 Cart (<span id="cart-count">0</span>)
+        </button>
+    </div>
+</nav>
+
+<h2 class="title">Collections</h2>
+
+<!-- COLLECTIONS -->
+<div class="container">
+<div class="row g-4">
+
+<div class="col-md-3">
+<div class="collection-card" onclick="filterProducts('gold')">
+<img src="https://www.awareness-avenue.com/cdn/shop/files/1sGAlcRL9EuZ3_YKIE9XlCUAi-osUheY8.png?v=1768686228&width=1000">
+<div class="overlay"><h4>Gold</h4></div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="collection-card" onclick="filterProducts('diamond')">
+<img src="https://i.pinimg.com/736x/ec/e9/3c/ece93ce78218c1c8a6d7ee9212db274f.jpg">
+<div class="overlay"><h4>Diamond</h4></div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="collection-card" onclick="filterProducts('earrings')">
+<img src="https://i.pinimg.com/736x/ef/89/3b/ef893b6ade7d515308ce015f647358b3.jpg">
+<div class="overlay"><h4>Earrings</h4></div>
+</div>
+</div>
+
+<div class="col-md-3">
+<div class="collection-card" onclick="filterProducts('bracelet')">
+<img src="https://i.pinimg.com/control1/736x/10/57/4d/10574d3bf0a4c97f7b6470131cb28578.jpg">
+<div class="overlay"><h4>Bracelet</h4></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<h2 class="title">Products</h2>
+
+<!-- PRODUCTS -->
+<div class="container">
+<div class="row g-4" id="products">
+
+<!-- GOLD -->
+<div class="col-lg-3 col-md-6 product-item gold">
+<div class="card h-100 text-center p-2">
+<img src="https://i.pinimg.com/736x/bb/0b/4b/bb0b4b26451d424d46cf8f790b48d38e.jpg" class="card-img-top" style="height:200px; object-fit:cover;">
+<div class="card-body">
+<h6>Gold Necklace</h6>
+<p class="text-danger">₹4999</p>
+<input type="number" id="q1" value="1" min="1"
+class="form-control mb-2" style="width:80px; margin:auto;">
+<button class="btn btn-order w-100"
+onclick="addToCart('Gold Necklace',4999,'q1')">
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+
+<!-- DIAMOND -->
+<div class="col-lg-3 col-md-6 product-item diamond">
+<div class="card h-100 text-center p-2">
+<img src="https://i.pinimg.com/736x/a9/79/9d/a9799d8109ee02bf15baebd55f42904b.jpg"
+class="card-img-top" style="height:200px; object-fit:cover;">
+<div class="card-body">
+<h6>Diamond Ring</h6>
+<p class="text-danger">₹5999</p>
+<input type="number" id="q2" value="1" min="1"
+class="form-control mb-2" style="width:80px; margin:auto;">
+<button class="btn btn-order w-100"
+onclick="addToCart('Diamond Ring',5999,'q2')">
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+
+<!-- EARRINGS -->
+<div class="col-lg-3 col-md-6 product-item earrings">
+<div class="card h-100 text-center p-2">
+<img src="https://i.pinimg.com/control1/1200x/e2/cb/3e/e2cb3ef09369d0d8d935656bcb12d848.jpg"
+class="card-img-top" style="height:200px; object-fit:cover;">
+<div class="card-body">
+<h6>Earrings</h6>
+<p class="text-danger">₹2499</p>
+<input type="number" id="q3" value="1" min="1"
+class="form-control mb-2" style="width:80px; margin:auto;">
+<button class="btn btn-order w-100"
+onclick="addToCart('Earrings',2499,'q3')">
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+
+<!-- BRACELET -->
+<div class="col-lg-3 col-md-6 product-item bracelet">
+<div class="card h-100 text-center p-2">
+<img src="https://i.pinimg.com/control1/736x/e1/c7/5b/e1c75b70900cbd2229ec91bacdef4968.jpg"class="card-img-top" style="height:200px; object-fit:cover;">
+<div class="card-body">
+<h6>Bracelet</h6>
+<p class="text-danger">₹3499</p>
+<input type="number" id="q4" value="1" min="1"
+class="form-control mb-2" style="width:80px; margin:auto;">
+<button class="btn btn-order w-100"
+onclick="addToCart('Bracelet',3499,'q4')">
+Add to Cart
+</button>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- CART -->
+<div id="cartModal">
+<div class="cart-box">
+<h4>Your Cart</h4>
+<ul id="cart-items"></ul>
+<h5>Total ₹<span id="total">0</span></h5>
+<br>
+<button class="btn btn-dark w-100 mt-2"
+onclick="window.location.href='order.html'">
+Place Order
+</button>
+<br><br>
+<button class="btn btn-danger w-100" onclick="clearCart()">Clear</button>
+<br>
+<button class="btn btn-secondary w-100 mt-2" onclick="closeCart()">Close</button>
+</div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+function filterProducts(cat){
+document.querySelectorAll(".product-item").forEach(i=>{
+i.classList.contains(cat)?i.classList.remove("hide"):i.classList.add("hide");
+});
+}
+
+function addToCart(name, price, id){
+let q=parseInt(document.getElementById(id).value);
+cart.push({name,price,q,total:price*q});
+localStorage.setItem("cart",JSON.stringify(cart));
+updateCart();
+toast(name+" added");
+}
+
+function updateCart(){
+document.getElementById("cart-count").innerText=cart.length;
+}
+
+function openCart(){
+let list=document.getElementById("cart-items");
+let total=0;
+list.innerHTML="";
+cart.forEach(i=>{
+total+=i.total;
+list.innerHTML+=`<li>${i.name} x${i.q} ₹${i.total}</li>`;
+});
+document.getElementById("total").innerText=total;
+document.getElementById("cartModal").style.display="block";
+}
+
+function closeCart(){
+document.getElementById("cartModal").style.display="none";
+}
+
+function clearCart(){
+cart=[];
+localStorage.removeItem("cart");
+updateCart();
+openCart();
+}
+
+function toast(msg){
+let t=document.getElementById("toast");
+t.innerText=msg;
+t.style.display="block";
+setTimeout(()=>t.style.display="none",2000);
+}
+
+updateCart();
+</script>
+
+</body>
+</html>
